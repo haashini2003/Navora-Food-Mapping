@@ -1,0 +1,8 @@
+
+package com.navora.navora.repository;
+
+import com.navora.navora.model.Province;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface ProvinceRepository extends JpaRepository<Province, Long> {
+}

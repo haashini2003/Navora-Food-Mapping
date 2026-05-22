@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Navora</title>
+    <link rel="stylesheet" href="style.css"/>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+
+<header class="navbar">
+
+    <div class="logo">
+        <img
+                src="data:image/png;base64,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"
+                class="nav-icon"
+        />
+        <span class="brand">Navora</span>
+    </div>
+
+    <div class="right-controls">
+        <button class="theme-btn" id="themeBtn" onclick="toggleTheme()">🌙</button>
+    </div>
+
+</header>
+
+
+<!-- LOCATION BAR -->
+<section class="location-bar">
+    <div class="location-wrapper">
+
+        <input type="text" id="locationInput" placeholder="🔍 Enter location (e.g. Colombo, Kandy)" />
+
+        <button onclick="searchLocation()">
+            GO 🚀
+        </button>
+
+    </div>
+</section>
+
+<section class="cards-container" id="cardsContainer">
+<div id="hotelPopup" class="hotel-popup">
+    <div class="hotel-popup-content">
+
+        <div class="popup-header">
+            <h2>🏨 Hotels List</h2>
+            <span onclick="closeHotel()" class="close-btn">×</span>
+        </div>
+
+        <input type="text" id="hotelSearch" placeholder="🔍 Search hotel..." onkeyup="filterHotels()" />
+
+        <div id="hotelGrid" class="hotel-grid"></div>
+
+    </div>
+</div>
+</section>
+
+<!-- CATEGORY CARDS -->
+
+<section class="cards-container" id="cardsContainer"></section>
+
+<!-- DETAILS MODAL -->
+<div id="detailsModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal()">×</span>
+        <div id="modalBody"></div>
+    </div>
+</div>
+
+<!-- REVIEWS -->
+<section class="review-section">
+
+    <h2>⭐ Customer Reviews</h2>
+
+    <div class="review-form">
+        <input type="text" id="reviewName" placeholder="Your Name" />
+
+        <textarea id="reviewText" placeholder="Write your review..."></textarea>
+
+        <input type="file" id="reviewImage" accept="image/*" />
+
+        <select id="reviewRating">
+            <option value="5">★★★★★</option>
+            <option value="4">★★★★</option>
+            <option value="3">★★★</option>
+            <option value="2">★★</option>
+            <option value="1">★</option>
+        </select>
+
+        <button onclick="addReview()">Post Review 🚀</button>
+    </div>
+
+    <div id="reviewList" class="review-list"></div>
+
+</section>
+
+<!-- SUGGEST FORM -->
+<section class="suggest">
+    <h2>Suggest Us</h2>
+    <input type="text" id="sName" placeholder="Name"/>
+    <input type="email" id="sMail" placeholder="Email"/>
+    <textarea id="sText" placeholder="Your Suggestion"></textarea>
+    <button onclick="submitSuggest()">Send</button>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+
+    <div class="footer-box">
+        <h3>About</h3>
+        <p>Navora is a travel platform to find hotels, restaurants and cafes easily in Sri Lanka.</p>
+    </div>
+
+    <div class="footer-box">
+        <h3>Services</h3>
+        <p>Hotel listing<br/>Restaurant discovery<br/>Cafe & Fast food search<br/>Location based results</p>
+    </div>
+
+    <div class="footer-box">
+        <h3>Contact Us</h3>
+        <p>Email: support@navora.com</p>
+        <p>Phone: +94 77 123 4567</p>
+        <p>Web: www.navora.com</p>
+    </div>
+
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
