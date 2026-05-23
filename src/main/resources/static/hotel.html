@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotels - Navora</title>
+
+    <style>
+
+        body{
+            font-family: Arial, sans-serif;
+            background:#f5f5f5;
+            margin:0;
+            padding:20px;
+        }
+
+        h1{
+            text-align:center;
+            margin-bottom:30px;
+        }
+
+        .top-bar{
+            display:flex;
+            justify-content:flex-end;
+            margin-bottom:20px;
+        }
+
+        .top-bar button{
+            padding:12px 20px;
+            border:none;
+            background:#111;
+            color:white;
+            border-radius:10px;
+            cursor:pointer;
+        }
+
+        .grid{
+            display:grid;
+            grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+            gap:20px;
+        }
+
+        .card{
+            background:white;
+            border-radius:15px;
+            overflow:hidden;
+            box-shadow:0 4px 12px rgba(0,0,0,0.1);
+            cursor:pointer;
+            transition:0.3s;
+        }
+
+        .card:hover{
+            transform:translateY(-5px);
+        }
+
+        .card img{
+            width:100%;
+            height:220px;
+            object-fit:cover;
+        }
+
+        .card h3{
+            margin:10px;
+        }
+
+        .card p{
+            margin:10px;
+        }
+
+        .card button{
+            margin:10px;
+            padding:10px 15px;
+            border:none;
+            background:#007bff;
+            color:white;
+            border-radius:8px;
+            cursor:pointer;
+        }
+
+        .modal{
+            display:none;
+            position:fixed;
+            z-index:999;
+            left:0;
+            top:0;
+            width:100%;
+            height:100%;
+            overflow:auto;
+            background:rgba(0,0,0,0.7);
+        }
+
+        .modal-content{
+            background:white;
+            width:90%;
+            max-width:850px;
+            margin:40px auto;
+            padding:25px;
+            border-radius:20px;
+            position:relative;
+        }
+
+        .close{
+            position:absolute;
+            right:20px;
+            top:15px;
+            font-size:32px;
+            cursor:pointer;
+        }
+
+        .hotel-banner{
+            width:100%;
+            height:350px;
+            object-fit:cover;
+            border-radius:15px;
+        }
+
+        .room-gallery{
+            display:grid;
+            grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+            gap:15px;
+            margin-top:20px;
+        }
+
+        .room-gallery img{
+            width:100%;
+            height:160px;
+            object-fit:cover;
+            border-radius:12px;
+        }
+
+        .facility-list{
+            display:flex;
+            flex-wrap:wrap;
+            gap:10px;
+            margin-top:15px;
+        }
+
+        .facility{
+            background:#eee;
+            padding:10px 14px;
+            border-radius:20px;
+        }
+
+        .price-box{
+            background:#f0f7ff;
+            padding:15px;
+            border-radius:12px;
+            margin-top:20px;
+        }
+
+        .book-btn{
+            margin-top:20px;
+            padding:14px 20px;
+            border:none;
+            background:#28a745;
+            color:white;
+            border-radius:10px;
+            cursor:pointer;
+            font-size:16px;
+        }
+
+        .form-group{
+            margin-bottom:15px;
+        }
+
+        .form-group input{
+            width:100%;
+            padding:12px;
+            border:1px solid #ccc;
+            border-radius:8px;
+        }
+
+        .booking-card{
+            background:white;
+            padding:20px;
+            border-radius:15px;
+            margin-bottom:15px;
+            box-shadow:0 4px 10px rgba(0,0,0,0.08);
+        }
+
+        .booking-actions{
+            margin-top:15px;
+            display:flex;
+            gap:10px;
+        }
+
+        .edit-btn{
+            background:orange;
+            color:white;
+            border:none;
+            padding:10px 15px;
+            border-radius:8px;
+            cursor:pointer;
+        }
+
+        .delete-btn{
+            background:red;
+            color:white;
+            border:none;
+            padding:10px 15px;
+            border-radius:8px;
+            cursor:pointer;
+        }
+
+    </style>
+</head>
+
+<body>
+
+<h1>🏨 Hotels - Navora</h1>
+
+<div class="top-bar">
+    <button onclick="openBookings()">📖 My Bookings</button>
+</div>
+
+<div class="grid" id="hotelGrid"></div>
+
+<!-- HOTEL DETAILS MODAL -->
+<div class="modal" id="hotelModal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('hotelModal')">×</span>
+        <div id="hotelDetails"></div>
+    </div>
+</div>
+
+<!-- BOOKING FORM MODAL -->
+<div class="modal" id="bookingModal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('bookingModal')">×</span>
+
+        <h2>📝 Hotel Booking</h2>
+
+        <div class="form-group">
+            <input type="text" id="customerName" placeholder="Your Name">
+        </div>
+
+        <div class="form-group">
+            <input type="date" id="bookingDate">
+        </div>
+
+        <div class="form-group">
+            <input type="number" id="roomsCount" placeholder="Rooms Count">
+        </div>
+
+        <button class="book-btn" onclick="submitBooking()">
+            Confirm Booking
+        </button>
+    </div>
+</div>
+
+<!-- MY BOOKINGS -->
+<div class="modal" id="myBookingsModal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('myBookingsModal')">×</span>
+
+        <h2>📖 My Bookings</h2>
+
+        <div id="bookingList"></div>
+    </div>
+</div>
+
+<script>
+
+    const hotelNames = [
+    "Ocean Pearl Resort",
+    "Royal Crown Hotel",
+    "Sunset Paradise Inn",
+    "Golden Palm Suites",
+    "Skyline Luxury Stay",
+    "Blue Lagoon Hotel",
+    "Emerald Bay Resort",
+    "Grand Horizon Inn"
+    ];
+
+    const hotelImages = [
+    "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1578683010236-d716f9a3f461?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1445019980597-93fa8acb246c?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1455587734955-081b22074882?auto=format&fit=crop&w=800&q=80"
+    ];
+
+    const hotels = hotelNames.map((name, i) => ({
+        name,
+        image: hotelImages[i],
+        rating: (4 + Math.random()).toFixed(1),
+        price: 120 + i * 15,
+        facilities: [
+            "Free WiFi",
+            "Swimming Pool",
+            "Sea View",
+            "Spa",
+            "Restaurant",
+            "Gym"
+        ]
+    }));
+
+    const grid = document.getElementById("hotelGrid");
+
+    let selectedHotel = null;
+    let editIndex = null;
+
+    /********************
+    RENDER HOTELS
+    ********************/
+    function renderHotels(){
+
+        grid.innerHTML = "";
+
+        hotels.forEach(hotel => {
+
+            grid.innerHTML += `
+            <div class="card" onclick="openHotel('${hotel.name}')">
+
+                <img src="${hotel.image}">
+
+                <h3>${hotel.name}</h3>
+
+                <p>⭐ ${hotel.rating}</p>
+
+                <button onclick="event.stopPropagation(); openHotel('${hotel.name}')">
+                    See Details
+                </button>
+
+            </div>`;
+        });
+    }
+
+    renderHotels();
+
+    /********************
+    OPEN HOTEL DETAILS
+    ********************/
+    function openHotel(name){
+
+        const hotel = hotels.find(h => h.name === name);
+
+        selectedHotel = hotel;
+
+        document.getElementById("hotelDetails").innerHTML = `
+
+            <img class="hotel-banner" src="${hotel.image}">
+
+            <h2>${hotel.name}</h2>
+
+            <p>⭐ Rating: ${hotel.rating}</p>
+
+            <div class="price-box">
+                <h3>💰 Price: $${hotel.price} / night</h3>
+            </div>
+
+            <h3>🏨 Facilities</h3>
+
+            <div class="facility-list">
+                ${hotel.facilities.map(f => `<div class="facility">${f}</div>`).join("")}
+            </div>
+
+            <h3 style="margin-top:25px">🛏️ Room Gallery</h3>
+
+            <div class="room-gallery">
+
+                <img src="https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=800&q=80">
+                <img src="https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=800&q=80">
+                <img src="https://images.unsplash.com/photo-1540541338287-41700207dee6?auto=format&fit=crop&w=800&q=80">
+
+            </div>
+
+            <button class="book-btn" onclick="openBookingForm()">
+                Book Now
+            </button>
+        `;
+
+        document.getElementById("hotelModal").style.display = "block";
+    }
+
+    /********************
+    BOOKING
+    ********************/
+    function openBookingForm(){
+        document.getElementById("bookingModal").style.display = "block";
+    }
+
+    function submitBooking(){
+
+        const name = document.getElementById("customerName").value;
+        const date = document.getElementById("bookingDate").value;
+        const rooms = document.getElementById("roomsCount").value;
+
+        if(!name || !date || !rooms){
+            alert("Please fill all fields");
+            return;
+        }
+
+        let bookings = JSON.parse(localStorage.getItem("navoraBookings")) || [];
+
+        bookings.push({
+            hotel: selectedHotel.name,
+            customer: name,
+            date,
+            rooms
+        });
+
+        localStorage.setItem("navoraBookings", JSON.stringify(bookings));
+
+        alert("Booking Confirmed");
+
+        closeModal("bookingModal");
+    }
+
+    /********************
+    BOOKINGS
+    ********************/
+    function openBookings(){
+
+        const bookings = JSON.parse(localStorage.getItem("navoraBookings")) || [];
+
+        const list = document.getElementById("bookingList");
+        list.innerHTML = "";
+
+        bookings.forEach((b, i) => {
+
+            list.innerHTML += `
+            <div class="booking-card">
+                <h3>${b.hotel}</h3>
+                <p>${b.customer}</p>
+                <p>${b.date}</p>
+                <p>${b.rooms} rooms</p>
+            </div>`;
+        });
+
+        document.getElementById("myBookingsModal").style.display = "block";
+    }
+
+    /********************
+    CLOSE
+    ********************/
+    function closeModal(id){
+        document.getElementById(id).style.display = "none";
+    }
+
+</script>
+
+</body>
+</html>

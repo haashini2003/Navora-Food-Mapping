@@ -129,5 +129,26 @@
 </footer>
 
 <script src="script.js"></script>
+
+<!-- HOTEL / CATEGORY POPUP -->
+<div id="hotelPopup" class="hotel-popup">
+
+    <div class="hotel-popup-content">
+
+        <div class="popup-header">
+            <h2>List</h2>
+            <span onclick="closeHotel()" class="close-btn">×</span>
+        </div>
+
+        <input type="text"
+               id="hotelSearch"
+               placeholder="Search..."
+               onkeyup="filterHotels()" />
+
+        <div id="hotelGrid" class="hotel-grid"></div>
+
+    </div>
+
+</div>
 </body>
 </html>

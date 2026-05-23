@@ -1,246 +1,520 @@
- function toggleTheme() {
-   document.body.classList.toggle("dark-theme");
+/********************
+ THEME
+********************/
+function toggleTheme() {
 
-   // optional save preference
-   if (document.body.classList.contains("dark-theme")) {
-     localStorage.setItem("theme", "dark");
-   } else {
-     localStorage.setItem("theme", "light");
-   }
- }
+  document.body.classList.toggle("dark-theme");
 
- // load saved theme
- window.onload = function () {
-   const theme = localStorage.getItem("theme");
+  const themeBtn =
+    document.getElementById("themeBtn");
 
-   if (theme === "dark") {
-     document.body.classList.add("dark-theme");
-   }
- };
+  if (document.body.classList.contains("dark-theme")) {
 
- // REVIEWS
- let reviews = [];
+    localStorage.setItem("theme", "dark");
 
- function addReview() {
-   const name = document.getElementById("reviewName").value;
-   const text = document.getElementById("reviewText").value;
-   const rating = document.getElementById("reviewRating").value;
-   const imgInput = document.getElementById("reviewImage");
+    if (themeBtn) {
+      themeBtn.innerHTML = "☀️";
+    }
 
-   let imageUrl = "";
+  } else {
 
-   if (imgInput.files && imgInput.files[0]) {
-     imageUrl = URL.createObjectURL(imgInput.files[0]);
-   }
+    localStorage.setItem("theme", "light");
 
-   const review = {
-     name,
-     text,
-     rating,
-     image: imageUrl
-   };
+    if (themeBtn) {
+      themeBtn.innerHTML = "🌙";
+    }
+  }
+}
 
-   reviews.push(review);
-   renderReviews();
+window.addEventListener("DOMContentLoaded", () => {
 
-   document.getElementById("reviewName").value = "";
-   document.getElementById("reviewText").value = "";
- }
+  const theme =
+    localStorage.getItem("theme");
 
- function renderReviews() {
-   const container = document.getElementById("reviewList");
-   container.innerHTML = "";
+  const themeBtn =
+    document.getElementById("themeBtn");
 
-   reviews.forEach(r => {
-     container.innerHTML += `
-       <div class="review-card">
-         <h4>${r.name}</h4>
-         <p>${"⭐".repeat(r.rating)}</p>
-         <p>${r.text}</p>
-         ${r.image ? `<img src="${r.image}" />` : ""}
-         <button onclick="likeReview(this)">❤️ Like</button>
-       </div>
-     `;
-   });
- }
+  if (theme === "dark") {
 
- function likeReview(btn) {
-   btn.innerText = "❤️ Liked";
- }
+    document.body.classList.add("dark-theme");
 
- // SUGGEST
- function submitSuggest() {
-   alert("Thank you for your suggestion!");
- }
+    if (themeBtn) {
+      themeBtn.innerHTML = "☀️";
+    }
+  }
 
- const places = [
-   {
-     name: "Hotel",
-     type: "Stay",
-     image: "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=800&q=60",
-     desc: "Luxury hotel with AC rooms, pool and free WiFi"
-   },
-   {
-     name: "Restaurant",
-     type: "Food",
-     image: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=800&q=60",
-     desc: "Multi cuisine restaurant with Sri Lankan foods"
-   },
-   {
-     name: "Cafe",
-     type: "Coffee",
-     image: "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&w=800&q=60",
-     desc: "Cozy cafe with coffee, snacks and desserts"
-   },
-   {
-     name: "Pizza Hut",
-     type: "Pizza",
-     image: "https://images.unsplash.com/photo-1601924582970-9238bcb495d9?auto=format&fit=crop&w=800&q=60",
-     desc: "Famous Pizza Hut style cheesy pizzas"
-   },
-   {
-     name: "KFC",
-     type: "Food",
-     image: "https://images.unsplash.com/photo-1626645738196-c2a7c87a8f58?auto=format&fit=crop&w=800&q=60",
-     desc: "Hot fried chicken meals with fries and drinks"
-   },
-   {
-     name: "Fast Food",
-     type: "Quick Bite",
-     image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=800&q=60",
-     desc: "Burgers, fries and quick meals"
-   }
- ];
+  loadCards();
+});
 
- // LOAD CARDS
- function loadCards() {
-   const container = document.getElementById("cardsContainer");
-   container.innerHTML = "";
 
-   places.forEach(p => {
-     container.innerHTML += `
-       <div class="card" onclick="openDetails('${p.name}')">
-         <img src="${p.image}" />
-         <div class="card-content">
-           <h3>${p.name}</h3>
-           <p>${p.type}</p>
-         </div>
-       </div>
-     `;
-   });
- }
+/********************
+ REVIEWS
+********************/
+let reviews = [];
 
- // OPEN DETAILS MODAL
- function openDetails(name) {
-   const item = places.find(p => p.name === name);
+function addReview() {
 
-   document.getElementById("modalBody").innerHTML = `
-     <h2>${item.name}</h2>
-     <img src="${item.image}" style="width:100%;border-radius:10px"/>
-     <p style="margin-top:10px">${item.desc}</p>
-   `;
+  const name =
+    document.getElementById("reviewName").value;
 
-   document.getElementById("detailsModal").style.display = "block";
- }
+  const text =
+    document.getElementById("reviewText").value;
 
- // CLOSE MODAL
- function closeModal() {
-   document.getElementById("detailsModal").style.display = "none";
- }
+  const rating =
+    document.getElementById("reviewRating").value;
 
- // INIT
- loadCards();
+  const imgInput =
+    document.getElementById("reviewImage");
 
- const hotelList = [
-   "Grand Galaxy Hotel",
-   "Ocean View Inn",
-   "Sunrise Resort",
-   "Blue Sky Lodge",
-   "Royal Nest Hotel",
-   "Hill Top Stay",
-   "City Light Hotel",
-   "Pearl Residency",
-   "Skyline Suites",
-   "Golden Palm Hotel",
-   "Elite Comfort Inn",
-   "Mountain Breeze Hotel",
-   "Harbour View Stay",
-   "Crystal Lake Hotel",
-   "Urban Star Lodge",
-   "Royal Crown Hotel",
-   "Silver Sand Resort",
-   "Palm Grove Inn",
-   "Metro Grand Stay",
-   "Diamond Bay Hotel",
-   "Golden Star Residency",
-   "Sunset Paradise Hotel",
-   "Royal Beach Inn",
-   "Evergreen Hills Hotel",
-   "Infinity Suites",
-   "Cloud Nine Hotel",
-   "Lotus Grand Stay",
-   "Velvet Sky Hotel",
-   "Crystal Crown Inn",
-   "Paradise Gate Hotel",
-   "Blue Ocean Resort",
-   "Emerald View Hotel",
-   "Golden Leaf Lodge",
-   "Star Light Residency",
-   "Majestic Stay Hotel",
-   "Royal Peak Resort",
-   "Silver Moon Inn",
-   "City Crown Hotel",
-   "Green Valley Lodge",
-   "Royal Lotus Hotel",
-   "Sunshine Bay Stay",
-   "Hill Crest Hotel",
-   "Grand Horizon Inn",
-   "Ocean Pearl Suites",
-   "Royal Empire Hotel",
-   "Sky High Residency",
-   "Golden Horizon Stay",
-   "Blue Pearl Lodge",
-   "Crystal Sky Hotel",
-   "Elite Grand Inn"
- ];
+  let imageUrl = "";
 
- function openHotel() {
-   document.getElementById("hotelPopup").style.display = "block";
-   renderHotels(hotelList);
- }
+  if (imgInput.files && imgInput.files[0]) {
 
- function closeHotel() {
-   document.getElementById("hotelPopup").style.display = "none";
- }
+    imageUrl =
+      URL.createObjectURL(imgInput.files[0]);
+  }
 
- function renderHotels(list) {
-   const grid = document.getElementById("hotelGrid");
+  reviews.push({
+    name,
+    text,
+    rating,
+    image: imageUrl
+  });
 
-   let html = "";
+  renderReviews();
 
-   list.forEach(name => {
-     html += `
-       <div class="hotel-card">
-         <h3>${name}</h3>
-         <p>⭐ 4.${Math.floor(Math.random() * 9)} Rating</p>
-         <button onclick="selectHotel('${name}')">View</button>
-       </div>
-     `;
-   });
+  document.getElementById("reviewName").value = "";
+  document.getElementById("reviewText").value = "";
+}
 
-   grid.innerHTML = html;
- }
+function renderReviews() {
 
- function filterHotels() {
-   const value = document.getElementById("hotelSearch").value.toLowerCase();
+  const container =
+    document.getElementById("reviewList");
 
-   const filtered = hotelList.filter(h =>
-     h.toLowerCase().includes(value)
-   );
+  container.innerHTML = "";
 
-   renderHotels(filtered);
- }
+  reviews.forEach(r => {
 
- function selectHotel(name){
-   alert(name + " selected");
- }
+    container.innerHTML += `
+
+      <div class="review-card">
+
+        <h4>${r.name}</h4>
+
+        <p>${"⭐".repeat(r.rating)}</p>
+
+        <p>${r.text}</p>
+
+        ${r.image
+          ? `<img src="${r.image}" class="review-img"/>`
+          : ""
+        }
+
+        <button onclick="likeReview(this)">
+          ❤️ Like
+        </button>
+
+      </div>
+    `;
+  });
+}
+
+function likeReview(btn) {
+  btn.innerHTML = "❤️ Liked";
+}
+
+
+/********************
+ SUGGEST
+********************/
+function submitSuggest() {
+  alert("Thank you for your suggestion ❤️");
+}
+
+
+/********************
+ SEARCH LOCATION
+********************/
+function searchLocation() {
+
+  const location =
+    document.getElementById("locationInput").value;
+
+  if (location.trim() === "") {
+
+    alert("Please enter a location");
+    return;
+  }
+
+  alert("Searching in " + location);
+}
+
+
+/********************
+ MAIN CATEGORY DATA
+********************/
+const places = [
+
+  {
+    name: "Hotel",
+    type: "Stay",
+    image:
+      "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=1200&q=60"
+  },
+
+  {
+    name: "Restaurant",
+    type: "Food",
+    image:
+      "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=1200&q=60"
+  },
+
+  {
+    name: "Cafe",
+    type: "Coffee",
+    image:
+      "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&w=1200&q=60"
+  },
+
+  {
+    name: "Pizza Hut",
+    type: "Pizza",
+    image:
+      "https://images.unsplash.com/photo-1601924582970-9238bcb495d9?auto=format&fit=crop&w=1200&q=60"
+  },
+
+  {
+    name: "KFC",
+    type: "Food",
+    image:
+      "https://images.unsplash.com/photo-1562967916-eb82221dfb92?auto=format&fit=crop&w=1200&q=60"
+  },
+
+  {
+    name: "Fast Food",
+    type: "Quick Bite",
+    image:
+      "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=1200&q=60"
+  }
+
+];
+
+
+/********************
+ LOAD MAIN CARDS
+********************/
+function loadCards() {
+
+  const container =
+    document.getElementById("cardsContainer");
+
+  if (!container) return;
+
+  container.innerHTML = "";
+
+  places.forEach(place => {
+
+    container.innerHTML += `
+
+      <div class="card"
+           onclick="handleCategory('${place.name}')">
+
+        <img src="${place.image}" />
+
+        <div class="card-content">
+
+          <h3>${place.name}</h3>
+
+          <p>${place.type}</p>
+
+        </div>
+
+      </div>
+    `;
+  });
+}
+
+
+/********************
+ HANDLE CATEGORY
+********************/
+function handleCategory(category) {
+
+  if (category === "Hotel") {
+    window.location.href = "hotel.html";
+  }
+
+  else if (category === "Restaurant") {
+    window.location.href = "restaurant.html";
+  }
+
+  else if (category === "Cafe") {
+    window.location.href = "cafe.html";
+  }
+
+  else if (category === "KFC") {
+    window.location.href = "kfc.html";
+  }
+
+  else if (category === "Pizza Hut") {
+    window.location.href = "pizzahut.html";
+  }
+
+  else if (category === "Fast Food") {
+    window.location.href = "fastfood.html";
+  }
+}
+
+
+/********************
+ OPEN POPUP
+********************/
+function openHotelPopup(data, title) {
+
+  const popup =
+    document.getElementById("hotelPopup");
+
+  const popupTitle =
+    document.querySelector(".popup-header h2");
+
+  const grid =
+    document.getElementById("hotelGrid");
+
+  if (!popup || !popupTitle || !grid) {
+
+    console.error(
+      "hotelPopup OR hotelGrid OR popupTitle missing in HTML"
+    );
+
+    return;
+  }
+
+  popup.style.display = "flex";
+
+  popupTitle.innerHTML = title;
+
+  renderPopupCards(data);
+}
+
+
+/********************
+ CLOSE POPUP
+********************/
+function closeHotel() {
+
+  const popup =
+    document.getElementById("hotelPopup");
+
+  if (popup) {
+    popup.style.display = "none";
+  }
+}
+
+
+/********************
+ RENDER POPUP CARDS
+********************/
+function renderPopupCards(list) {
+
+  const grid =
+    document.getElementById("hotelGrid");
+
+  if (!grid) return;
+
+  grid.innerHTML = "";
+
+  list.forEach(item => {
+
+    grid.innerHTML += `
+
+      <div class="hotel-card">
+
+        <img
+          src="${item.image}"
+          class="hotel-img"
+        />
+
+        <h3>${item.name}</h3>
+
+        <p>⭐ ${item.rating}</p>
+
+        <button
+          onclick="selectPlace('${item.name}')">
+
+          View
+
+        </button>
+
+      </div>
+    `;
+  });
+}
+
+
+/********************
+ FILTER SEARCH
+********************/
+function filterHotels() {
+
+  const input =
+    document.getElementById("hotelSearch");
+
+  if (!input) return;
+
+  const search =
+    input.value.toLowerCase();
+
+  const allData = [
+
+    ...hotelList,
+    ...restaurantList,
+    ...cafeList,
+    ...pizzaList,
+    ...kfcList,
+    ...fastFoodList
+
+  ];
+
+  const filtered =
+    allData.filter(item =>
+      item.name
+        .toLowerCase()
+        .includes(search)
+    );
+
+  renderPopupCards(filtered);
+}
+
+
+/********************
+ SELECT PLACE
+********************/
+function selectPlace(name) {
+  alert(name + " selected ❤️");
+}
+
+
+/********************
+ HOTEL LIST
+********************/
+const hotelList = [
+
+  {
+    name: "Grand Galaxy Hotel",
+    image:
+      "https://images.unsplash.com/photo-1445019980597-93fa8acb246c?auto=format&fit=crop&w=900&q=60",
+    rating: "4.9"
+  },
+
+  {
+    name: "Ocean View Inn",
+    image:
+      "https://images.unsplash.com/photo-1522798514-97ceb8c4f1c8?auto=format&fit=crop&w=900&q=60",
+    rating: "4.7"
+  },
+
+  {
+    name: "Royal Nest Hotel",
+    image:
+      "https://images.unsplash.com/photo-1578683010236-d716f9a3f461?auto=format&fit=crop&w=900&q=60",
+    rating: "4.8"
+  },
+
+  {
+    name: "Sunrise Resort",
+    image:
+      "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=900&q=60",
+    rating: "4.6"
+  }
+
+];
+
+
+/********************
+ RESTAURANT LIST
+********************/
+const restaurantList = [
+
+  {
+    name: "Spice Garden",
+    image:
+      "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=900&q=60",
+    rating: "4.8"
+  },
+
+  {
+    name: "Royal Dine",
+    image:
+      "https://images.unsplash.com/photo-1552566626-52f8b828add9?auto=format&fit=crop&w=900&q=60",
+    rating: "4.7"
+  }
+
+];
+
+
+/********************
+ CAFE LIST
+********************/
+const cafeList = [
+
+  {
+    name: "Coffee Bliss",
+    image:
+      "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=900&q=60",
+    rating: "4.8"
+  },
+
+  {
+    name: "Mocha Heaven",
+    image:
+      "https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=900&q=60",
+    rating: "4.6"
+  }
+
+];
+
+
+/********************
+ PIZZA LIST
+********************/
+const pizzaList = [
+
+  {
+    name: "Pizza Hut Colombo",
+    image:
+      "https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=900&q=60",
+    rating: "4.7"
+  }
+
+];
+
+
+/********************
+ KFC LIST
+********************/
+const kfcList = [
+
+  {
+    name: "KFC Colombo",
+    image:
+      "https://images.unsplash.com/photo-1513639776629-7b61b0ac49cb?auto=format&fit=crop&w=900&q=60",
+    rating: "4.8"
+  }
+
+];
+
+
+/********************
+ FAST FOOD LIST
+********************/
+const fastFoodList = [
+
+  {
+    name: "Burger Spot",
+    image:
+      "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=900&q=60",
+    rating: "4.7"
+  }
+
+];
