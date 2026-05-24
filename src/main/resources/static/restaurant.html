@@ -1,7 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Restaurant -Navora</title>
+
+    <style>
+
+        body{
+            margin:0;
+            font-family:Arial;
+            background:#f5f5f5;
+        }
+
+        h1{
+            text-align:center;
+            padding:20px;
+        }
+
+        /* RESTAURANT GRID */
+        .grid{
+            display:grid;
+            grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+            gap:20px;
+            padding:20px;
+        }
+
+        .card{
+            background:white;
+            border-radius:18px;
+            overflow:hidden;
+            box-shadow:0 4px 12px rgba(0,0,0,0.1);
+            transition:0.3s;
+        }
+
+        .card:hover{
+            transform:translateY(-5px);
+        }
+
+        .card img{
+            width:100%;
+            height:200px;
+            object-fit:cover;
+        }
+
+        .card h3{
+            margin:15px 15px 5px;
+        }
+
+        .card p{
+            margin:0 15px 10px;
+            color:#666;
+        }
+
+        .card button{
+            margin:0 15px 15px;
+            padding:12px 15px;
+            border:none;
+            background:#ff5722;
+            color:white;
+            border-radius:10px;
+            cursor:pointer;
+            font-size:15px;
+        }
+
+        /* FULL VIEW */
+        .view{
+            display:none;
+            position:fixed;
+            inset:0;
+            background:#f5f5f5;
+            overflow:auto;
+            z-index:999;
+        }
+
+        .header{
+            background:#111;
+            color:white;
+            padding:18px;
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            position:sticky;
+            top:0;
+            z-index:100;
+        }
+
+        .close{
+            cursor:pointer;
+            font-size:24px;
+        }
+
+        /* FOOD GRID */
+        .food-grid{
+            display:grid;
+            grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+            gap:18px;
+            padding:20px;
+        }
+
+        .food{
+            background:white;
+            border-radius:15px;
+            overflow:hidden;
+            box-shadow:0 3px 10px rgba(0,0,0,0.1);
+            transition:0.3s;
+        }
+
+        .food:hover{
+            transform:scale(1.02);
+        }
+
+        .food img{
+            width:100%;
+            height:160px;
+            object-fit:cover;
+        }
+
+        .food h4{
+            margin:10px;
+        }
+
+        .food p{
+            margin:0 10px 8px;
+            color:green;
+            font-weight:bold;
+        }
+
+        .review{
+            margin:0 10px 15px;
+            color:#666;
+            font-size:13px;
+        }
+
+        .navbar{
+    position:sticky;
+    top:0;
+    z-index:1000;
+    background:#111;
+    color:white;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:12px 15px;
+}
+
+.logo{
+    font-size:18px;
+    font-weight:bold;
+}
+
+.theme-btn{
+    cursor:pointer;
+    font-size:20px;
+    user-select:none;
+}
+
+/* DARK THEME */
+body.dark-theme{
+    background:#121212;
+    color:white;
+}
+
+body.dark-theme .card{
+    background:#1e1e1e;
+    color:white;
+}
+        .navbar{
+    position:sticky;
+    top:0;
+    z-index:1000;
+    background:#111;
+    color:white;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:12px 15px;
+}
+
+.logo{
+    font-size:18px;
+    font-weight:bold;
+}
+
+.nav-right{
+    display:flex;
+    gap:15px;
+    align-items:center;
+}
+
+.theme-btn{
+    cursor:pointer;
+    font-size:20px;
+}
+
+.cart{
+    cursor:pointer;
+    background:#ff5722;
+    padding:6px 10px;
+    border-radius:20px;
+    font-size:14px;
+    display:flex;
+    align-items:center;
+    gap:5px;
+}
+
+/* CART NUMBER */
+#cartCount{
+    background:white;
+    color:black;
+    border-radius:50%;
+    padding:2px 6px;
+    font-size:12px;
+    font-weight:bold;
+}
+
+/* DARK MODE */
+body.dark-theme{
+    background:#121212;
+    color:white;
+}
+
+body.dark-theme .card{
+    background:#1e1e1e;
+    color:white;
+}
+
+body.dark-theme .navbar{
+    background:#000;
+}
+
+    </style>
+</head>
+
+<body>
+
+<div class="navbar">
+    <div class="logo">🍽️ Navora</div>
+
+    <div class="nav-right">
+        <span class="theme-btn" onclick="toggleTheme()" id="themeBtn">🌙</span>
+    </div>
+    <!-- CART -->
+    <div class="cart" onclick="openCart()">
+        🛒 <span id="cartCount">0</span>
+    </div>
+
+    <!-- THEME -->
+    <span class="theme-btn" onclick="toggleTheme()" id="themeBtn">🌙</span>
+
+</div>
+</div>
+
+<h1>🍽️ Navora - Food</h1>
+
+<div class="grid" id="grid"></div>
+
+<!-- FULL VIEW -->
+<div class="view" id="view">
+
+    <div class="header">
+
+        <span id="title">Restaurant</span>
+
+        <span class="close" onclick="closeView()">✖</span>
+
+    </div>
+
+    <div id="menu"></div>
+
+</div>
+
 <script>
-    const restaurants = Array.from({ length: 50 }, (_, i) => ({
-      name: `Royal Restaurant ${i + 1}`,
-      rating: (4 + Math.random()).toFixed(1),
-      image: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5"
-    }));
+
+    /* =======================
+       15 RESTAURANTS
+    ======================= */
+    const restaurants = [
+
+    {
+        name:"Spice Garden",
+        img:"https://images.unsplash.com/photo-1552566626-52f8b828add9?auto=format&fit=crop&w=900&q=80"
+    },
+
+    {
+        name:"Ocean Taste",
+        img:"https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=900&q=80"
+    },
+
+    {
+        name:"Royal Kitchen",
+        img:"https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=900&q=80"
+    },
+
+    {
+        name:"Sunrise Dine",
+        img:"https://images.unsplash.com/photo-1466978913421-dad2ebd01d17?auto=format&fit=crop&w=900&q=80"
+    },
+
+    {
+        name:"Green Leaf",
+        img:"https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=900&q=80"
+    },
+
+    {
+        name:"Blue Wave",
+        img:"https://images.unsplash.com/photo-1498654896293-37aacf113fd9?auto=format&fit=crop&w=900&q=80"
+    },
+
+    {
+        name:"Golden Spoon",
+        img:"https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=900&q=80"
+    },
+
+    {
+        name:"Urban Curry",
+        img:"https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&w=900&q=80"
+    },
+
+    {
+        name:"Sea Breeze",
+        img:"https://images.unsplash.com/photo-1481833761820-0509d3217039?auto=format&fit=crop&w=900&q=80"
+    },
+
+    {
+        name:"Tandoor House",
+        img:"https://images.unsplash.com/photo-1514933651103-005eec06c04b?auto=format&fit=crop&w=900&q=80"
+    },
+
+    {
+        name:"Street Bites",
+        img:"https://images.unsplash.com/photo-1528605248644-14dd04022da1?auto=format&fit=crop&w=900&q=80"
+    },
+
+    {
+        name:"Island Flavours",
+        img:"https://images.unsplash.com/photo-1541544741938-0af808871cc0?auto=format&fit=crop&w=900&q=80"
+    },
+
+    {
+        name:"Royal Feast",
+        img:"https://images.unsplash.com/photo-1424847651672-bf20a4b0982b?auto=format&fit=crop&w=900&q=80"
+    },
+
+    {
+        name:"City Food Court",
+        img:"https://images.unsplash.com/photo-1466978913421-dad2ebd01d17?auto=format&fit=crop&w=900&q=80"
+    },
+
+    {
+        name:"Nature Table",
+        img:"https://images.unsplash.com/photo-1515003197210-e0cd71810b5f?auto=format&fit=crop&w=900&q=80"
+    }
+
+    ];
+
+    /* =======================
+       DYNAMIC MENUS
+    ======================= */
+    const restaurantMenus = [
+
+    {
+        foods:[
+
+            {
+                name:"Idly",
+                img:"https://images.unsplash.com/photo-1589301760014-d929f3979dbc?auto=format&fit=crop&w=800&q=80",
+                price:350,
+                review:"⭐ Soft idly with sambar"
+            },
+
+            {
+                name:"Dosa",
+                img:"https://images.unsplash.com/photo-1630383249896-424e482df921?auto=format&fit=crop&w=800&q=80",
+                price:450,
+                review:"⭐ Crispy dosa with chutney"
+            },
+
+            {
+                name:"Biryani",
+                img:"https://images.unsplash.com/photo-1701579231305-d84d8af9a3fd?auto=format&fit=crop&w=800&q=80",
+                price:1200,
+                review:"⭐ Famous spicy biryani"
+            },
+
+            {
+                name:"Parotta",
+                img:"https://images.unsplash.com/photo-1628294896516-2d494ba8b0e9?auto=format&fit=crop&w=800&q=80",
+                price:300,
+                review:"⭐ Soft layered parotta"
+            },
+
+            {
+                name:"Kottu",
+                img:"https://images.unsplash.com/photo-1673442635965-723ba6f1d736?auto=format&fit=crop&w=800&q=80",
+                price:850,
+                review:"⭐ Sri Lankan street favourite"
+            }
+
+        ]
+    },
+
+    {
+        foods:[
+
+            {
+                name:"Pasta",
+                img:"https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?auto=format&fit=crop&w=800&q=80",
+                price:1500,
+                review:"⭐ Creamy Italian pasta"
+            },
+
+            {
+                name:"Noodles",
+                img:"https://images.unsplash.com/photo-1617622141573-36be0b0c5a8b?auto=format&fit=crop&w=800&q=80",
+                price:900,
+                review:"⭐ Spicy Asian noodles"
+            },
+
+            {
+                name:"Fried Rice",
+                img:"https://images.unsplash.com/photo-1512058564366-18510be2db19?auto=format&fit=crop&w=800&q=80",
+                price:950,
+                review:"⭐ Chicken fried rice"
+            },
+
+            {
+                name:"Soup",
+                img:"https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&w=800&q=80",
+                price:500,
+                review:"⭐ Hot vegetable soup"
+            },
+
+            {
+                name:"Salad",
+                img:"https://images.unsplash.com/photo-1546793665-c74683f339c1?auto=format&fit=crop&w=800&q=80",
+                price:650,
+                review:"⭐ Fresh healthy salad"
+            }
+
+        ]
+    },
+
+    {
+        foods:[
+
+            {
+                name:"Ice Cream",
+                img:"https://images.unsplash.com/photo-1563805042-7684c019e1cb?auto=format&fit=crop&w=800&q=80",
+                price:250,
+                review:"⭐ Chocolate ice cream"
+            },
+
+            {
+                name:"Tea",
+                img:"https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=800&q=80",
+                price:150,
+                review:"⭐ Sri Lankan milk tea"
+            },
+
+            {
+                name:"Chicken Curry",
+                img:"https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?auto=format&fit=crop&w=800&q=80",
+                price:950,
+                review:"⭐ Rich spicy curry"
+            },
+
+            {
+                name:"Rice & Curry",
+                img:"https://images.unsplash.com/photo-1666190092159-3171cf0fbb12?auto=format&fit=crop&w=800&q=80",
+                price:1100,
+                review:"⭐ Traditional Sri Lankan meal"
+            },
+
+            {
+                name:"String Hoppers",
+                img:"https://images.unsplash.com/photo-1676300185164-8ffcf5d0dbea?auto=format&fit=crop&w=800&q=80",
+                price:400,
+                review:"⭐ Served with sambal"
+            }
+
+        ]
+    }
+
+    ];
+
+    /* =======================
+       RENDER RESTAURANTS
+    ======================= */
+    const grid = document.getElementById("grid");
+
+    restaurants.forEach((r,i)=>{
+
+        grid.innerHTML += `
+
+        <div class="card">
+
+            <img src="${r.img}" alt="${r.name}">
+
+            <h3>${r.name}</h3>
+
+            <p>⭐ 4.${i%5 + 5} • Premium Restaurant</p>
+
+            <button onclick="openRes(${i})">
+                See Details
+            </button>
+
+        </div>
+
+        `;
+    });
+
+    /* =======================
+       OPEN RESTAURANT
+    ======================= */
+    function openRes(i){
+
+        document.getElementById("title").innerText =
+        restaurants[i].name;
+
+        const menuData =
+        restaurantMenus[i % restaurantMenus.length];
+
+        const menu =
+        document.getElementById("menu");
+
+        menu.innerHTML = `
+        <div class="food-grid">
+        ${menuData.foods.map(food => `
+
+            <div class="food">
+
+                <img src="${food.img}" alt="${food.name}">
+
+                <h4>${food.name}</h4>
+
+                <p>Rs ${food.price}</p>
+
+                <div class="review">
+                    ${food.review}
+                </div>
+
+            </div>
+
+        `).join("")}
+        </div>
+        `;
+
+        document.getElementById("view").style.display =
+        "block";
+    }
+
+    /* =======================
+       CLOSE VIEW
+    ======================= */
+    function closeView(){
+
+        document.getElementById("view").style.display =
+        "none";
+    }
+
 </script>
+
+</body>
+</html>

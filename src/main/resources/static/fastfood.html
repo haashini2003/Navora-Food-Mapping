@@ -1,5 +1,291 @@
-const fastfood = Array.from({ length: 50 }, (_, i) => ({
-name: `Fast Food Spot ${i + 1}`,
-rating: (4 + Math.random()).toFixed(1),
-image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd"
-}));
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Fast Food - Navora</title>
+
+    <style>
+        body{
+            margin:0;
+            font-family:Arial;
+            background:#f5f5f5;
+        }
+
+        /* HEADER */
+        h1{
+            text-align:center;
+            padding:15px;
+        }
+
+        /* GRID */
+        .grid{
+            display:grid;
+            grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+            gap:15px;
+            padding:15px;
+        }
+
+        /* CARD */
+        .card{
+            background:white;
+            border-radius:15px;
+            overflow:hidden;
+            box-shadow:0 3px 10px rgba(0,0,0,0.1);
+            cursor:pointer;
+        }
+
+        .card img{
+            width:100%;
+            height:160px;
+            object-fit:cover;
+        }
+
+        .card h3{
+            margin:10px;
+        }
+
+        .card p{
+            margin:5px 10px;
+            color:green;
+            font-weight:bold;
+        }
+
+        .card small{
+            margin:0 10px 10px;
+            display:block;
+            color:#666;
+        }
+
+        /* BACK BUTTON */
+        .back{
+            padding:10px 15px;
+            background:#111;
+            color:white;
+            cursor:pointer;
+            display:none;
+        }
+
+        /* VIEW */
+        .view{
+            display:none;
+        }
+
+        .navbar{
+    position:sticky;
+    top:0;
+    z-index:1000;
+    background:#111;
+    color:white;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:12px 15px;
+}
+
+.logo{
+    font-size:18px;
+    font-weight:bold;
+}
+
+.theme-btn{
+    cursor:pointer;
+    font-size:20px;
+    user-select:none;
+}
+
+/* DARK THEME */
+body.dark-theme{
+    background:#121212;
+    color:white;
+}
+
+body.dark-theme .card{
+    background:#1e1e1e;
+    color:white;
+}
+
+        .navbar{
+    position:sticky;
+    top:0;
+    z-index:1000;
+    background:#111;
+    color:white;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:12px 15px;
+}
+
+.logo{
+    font-size:18px;
+    font-weight:bold;
+}
+
+.nav-right{
+    display:flex;
+    gap:15px;
+    align-items:center;
+}
+
+.theme-btn{
+    cursor:pointer;
+    font-size:20px;
+}
+
+.cart{
+    cursor:pointer;
+    background:#ff5722;
+    padding:6px 10px;
+    border-radius:20px;
+    font-size:14px;
+    display:flex;
+    align-items:center;
+    gap:5px;
+}
+
+/* CART NUMBER */
+#cartCount{
+    background:white;
+    color:black;
+    border-radius:50%;
+    padding:2px 6px;
+    font-size:12px;
+    font-weight:bold;
+}
+
+/* DARK MODE */
+body.dark-theme{
+    background:#121212;
+    color:white;
+}
+
+body.dark-theme .card{
+    background:#1e1e1e;
+    color:white;
+}
+
+body.dark-theme .navbar{
+    background:#000;
+}
+    </style>
+</head>
+
+<body>
+<div class="navbar">
+    <div class="logo">🍽️ Navora</div>
+
+    <div class="nav-right">
+        <span class="theme-btn" onclick="toggleTheme()" id="themeBtn">🌙</span>
+    </div>
+    <!-- CART -->
+    <div class="cart" onclick="openCart()">
+        🛒 <span id="cartCount">0</span>
+    </div>
+
+    <!-- THEME -->
+    <span class="theme-btn" onclick="toggleTheme()" id="themeBtn">🌙</span>
+
+</div>
+</div>
+
+<h1>🍔 Fast Food Explorer</h1>
+
+<div class="back" id="backBtn" onclick="goBack()">⬅ Back</div>
+
+<!-- STEP 1: SHOP LIST -->
+<div class="grid" id="shopGrid"></div>
+
+<!-- STEP 2: FOOD LIST -->
+<div class="view" id="foodView">
+    <div class="grid" id="foodGrid"></div>
+</div>
+
+<script>
+
+    /* =======================
+    FAST FOOD SHOPS (10)
+    ======================= */
+    const shops = [
+    { name:"KFC Express", img:"https://images.unsplash.com/photo-1562967916-eb82221dfb92" },
+    { name:"Burger King", img:"https://images.unsplash.com/photo-1550547660-d9450f859349" },
+    { name:"McDonalds", img:"https://images.unsplash.com/photo-1552566626-52f8b828add9" },
+    { name:"Subway", img:"https://images.unsplash.com/photo-1550317138-10000687a72b" },
+    { name:"Pizza Corner",img: "https://source.unsplash.com/600x400/?pizza" },
+    { name:"Snack House", img:"https://images.unsplash.com/photo-1606756790138-261d2b21cd75" },
+    { name:"Street Bite", img:"https://images.unsplash.com/photo-1551782450-a2132b4ba21d" },
+    { name:"Grill Master",img: "https://source.unsplash.com/600x400/?grill,chicken"   },
+    { name:"Food Factory", img:"https://images.unsplash.com/photo-1529692236671-f1f6cf9683ba" },
+    { name:"Urban Fast", img:"https://images.unsplash.com/photo-1504674900247-0877df9cc836" }
+    ];
+
+    /* =======================
+    FAST FOOD ITEMS (15)
+    ======================= */
+    const foods = [
+    {name:"Chicken Burger", img:"https://images.unsplash.com/photo-1550547660-d9450f859349", price:950, rating:4.7},
+    {name:"Beef Burger", img:"https://images.unsplash.com/photo-1568901346375-23c9450c58cd", price:1100, rating:4.8},
+    {name:"Cheese Burger",img: "https://source.unsplash.com/600x400/?cheeseburger", price:1000, rating:4.6},
+    {name:"French Fries", img:"https://images.unsplash.com/photo-1573080496219-bb080dd4f877", price:400, rating:4.5},
+    {name:"Hot Dog", img:"https://images.unsplash.com/photo-1619740455993-9e612b1af08a", price:750, rating:4.4},
+    {name:"Sandwich", img:"https://images.unsplash.com/photo-1550507992-eb63ffee0847", price:650, rating:4.5},
+    {name:"Chicken Nuggets", img: "https://source.unsplash.com/600x400/?nuggets", price:850, rating:4.6},
+    {name:"Fried Chicken",  img: "https://source.unsplash.com/600x400/?fried-chicken", price:1200, rating:4.8},
+    {name:"Wrap", img:"https://images.unsplash.com/photo-1559847844-5315695dadae", price:700, rating:4.5},
+    {name:"Shawarma", img:"https://images.unsplash.com/photo-1603360946369-dc9bb6258143", price:900, rating:4.7},
+    {name:"Popcorn Chicken", img:"https://images.unsplash.com/photo-1606756790138-261d2b21cd75", price:800, rating:4.6},
+    {name:"Chicken Wings", img:"https://images.unsplash.com/photo-1606756790138-261d2b21cd75", price:950, rating:4.7},
+    {name:"Onion Rings", img:"https://images.unsplash.com/photo-1639024471283-03518883512d", price:500, rating:4.3},
+    {name:"Milkshake", img:"https://images.unsplash.com/photo-1563805042-7684c019e1cb", price:850, rating:4.6},
+    {name:"Pizza Slice", img: "https://source.unsplash.com/600x400/?pizza,slice", price:500, rating:4.4}
+    ];
+
+    /* =======================
+    RENDER SHOPS
+    ======================= */
+    const shopGrid = document.getElementById("shopGrid");
+
+    shops.forEach((s, i) => {
+        shopGrid.innerHTML += `
+        <div class="card" onclick="openShop(${i})">
+            <img src="${s.img}">
+            <h3>${s.name}</h3>
+            <small>Click to view menu</small>
+        </div>`;
+    });
+
+    /* =======================
+    OPEN SHOP → SHOW FOODS
+    ======================= */
+    function openShop(index){
+
+        document.getElementById("shopGrid").style.display="none";
+        document.getElementById("backBtn").style.display="block";
+        document.getElementById("foodView").style.display="block";
+
+        const foodGrid = document.getElementById("foodGrid");
+        foodGrid.innerHTML="";
+
+        foods.forEach(f=>{
+            foodGrid.innerHTML += `
+            <div class="card">
+                <img src="${f.img}">
+                <h3>${f.name}</h3>
+                <p>Rs ${f.price}</p>
+                <small>⭐ ${f.rating}</small>
+            </div>`;
+        });
+    }
+
+    /* =======================
+    BACK BUTTON
+    ======================= */
+    function goBack(){
+        document.getElementById("shopGrid").style.display="grid";
+        document.getElementById("backBtn").style.display="none";
+        document.getElementById("foodView").style.display="none";
+    }
+
+</script>
+
+</body>
+</html>

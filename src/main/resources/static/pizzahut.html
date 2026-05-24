@@ -1,5 +1,519 @@
-const pizza = Array.from({ length: 50 }, (_, i) => ({
-name: `Pizza Hut ${i + 1}`,
-rating: (4 + Math.random()).toFixed(1),
-image: "https://images.unsplash.com/photo-1513104890138-7c749659a591"
-}));
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Navora Pizza Hut Pro</title>
+
+    <style>
+
+        body{
+            margin:0;
+            font-family:Arial;
+            background:#f5f5f5;
+        }
+
+        /* HEADER */
+        .title{
+            text-align:center;
+            padding:20px;
+            background:#d62828;
+            color:white;
+            margin:0;
+        }
+
+        /* RESTAURANT GRID */
+        .grid{
+            display:grid;
+            grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+            gap:20px;
+            padding:20px;
+        }
+
+        .card{
+            background:white;
+            border-radius:18px;
+            overflow:hidden;
+            box-shadow:0 4px 12px rgba(0,0,0,0.1);
+            transition:0.3s;
+        }
+
+        .card:hover{
+            transform:translateY(-5px);
+        }
+
+        .card img{
+            width:100%;
+            height:220px;
+            object-fit:cover;
+        }
+
+        .card-content{
+            padding:15px;
+        }
+
+        .card h3{
+            margin:0 0 10px;
+        }
+
+        .card button{
+            border:none;
+            background:#d62828;
+            color:white;
+            padding:12px 18px;
+            border-radius:10px;
+            cursor:pointer;
+            margin-top:10px;
+        }
+
+        /* FULL SCREEN VIEW */
+        .view{
+            display:none;
+            position:fixed;
+            inset:0;
+            background:#f8f8f8;
+            overflow:auto;
+            z-index:999;
+        }
+
+        .header{
+            background:#111;
+            color:white;
+            padding:18px;
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            position:sticky;
+            top:0;
+        }
+
+        .close{
+            cursor:pointer;
+            font-size:24px;
+        }
+
+        /* FOOD GRID */
+        .food-grid{
+            display:grid;
+            grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+            gap:18px;
+            padding:20px;
+        }
+
+        .food{
+            background:white;
+            border-radius:16px;
+            overflow:hidden;
+            box-shadow:0 3px 10px rgba(0,0,0,0.08);
+        }
+
+        .food img{
+            width:100%;
+            height:180px;
+            object-fit:cover;
+        }
+
+        .food-info{
+            padding:12px;
+        }
+
+        .food h4{
+            margin:0 0 10px;
+        }
+
+        .price{
+            color:green;
+            font-weight:bold;
+            margin-bottom:8px;
+        }
+
+        .review{
+            color:#555;
+            font-size:14px;
+        }
+
+        .navbar{
+    position:sticky;
+    top:0;
+    z-index:1000;
+    background:#111;
+    color:white;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:12px 15px;
+}
+
+.logo{
+    font-size:18px;
+    font-weight:bold;
+}
+
+.theme-btn{
+    cursor:pointer;
+    font-size:20px;
+    user-select:none;
+}
+
+/* DARK THEME */
+body.dark-theme{
+    background:#121212;
+    color:white;
+}
+
+body.dark-theme .card{
+    background:#1e1e1e;
+    color:white;
+}
+
+        .navbar{
+    position:sticky;
+    top:0;
+    z-index:1000;
+    background:#111;
+    color:white;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:12px 15px;
+}
+
+.logo{
+    font-size:18px;
+    font-weight:bold;
+}
+
+.nav-right{
+    display:flex;
+    gap:15px;
+    align-items:center;
+}
+
+.theme-btn{
+    cursor:pointer;
+    font-size:20px;
+}
+
+.cart{
+    cursor:pointer;
+    background:#ff5722;
+    padding:6px 10px;
+    border-radius:20px;
+    font-size:14px;
+    display:flex;
+    align-items:center;
+    gap:5px;
+}
+
+/* CART NUMBER */
+#cartCount{
+    background:white;
+    color:black;
+    border-radius:50%;
+    padding:2px 6px;
+    font-size:12px;
+    font-weight:bold;
+}
+
+/* DARK MODE */
+body.dark-theme{
+    background:#121212;
+    color:white;
+}
+
+body.dark-theme .card{
+    background:#1e1e1e;
+    color:white;
+}
+
+body.dark-theme .navbar{
+    background:#000;
+}
+
+    </style>
+</head>
+
+<body>
+
+<div class="navbar">
+    <div class="logo">🍽️ Navora</div>
+
+    <div class="nav-right">
+        <span class="theme-btn" onclick="toggleTheme()" id="themeBtn">🌙</span>
+    </div>
+    <!-- CART -->
+    <div class="cart" onclick="openCart()">
+        🛒 <span id="cartCount">0</span>
+    </div>
+
+    <!-- THEME -->
+    <span class="theme-btn" onclick="toggleTheme()" id="themeBtn">🌙</span>
+
+</div>
+
+</div>
+<h1 class="title">🍕 Navora Pizza Hut Pro</h1>
+
+<div class="grid" id="grid"></div>
+
+<!-- FULL VIEW -->
+<div class="view" id="view">
+
+    <div class="header">
+
+        <span id="title">Pizza Hut</span>
+
+        <span class="close" onclick="closeView()">✖</span>
+
+    </div>
+
+    <div id="menu"></div>
+
+</div>
+
+<script>
+
+    /* =========================
+    10 PIZZA HUT BRANCHES
+    ========================= */
+
+    const restaurants = [
+
+    {
+    name:"Pizza Hut Colombo",
+    img:"https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=900&q=80"
+    },
+
+    {
+    name:"Pizza Hut Kandy",
+    img:"https://images.unsplash.com/photo-1548365328-9f547fb0957b?auto=format&fit=crop&w=900&q=80"
+    },
+
+    {
+    name:"Pizza Hut Galle",
+    img:"https://images.unsplash.com/photo-1511689660979-10d2b1aada49?auto=format&fit=crop&w=900&q=80"
+    },
+
+    {
+    name:"Pizza Hut Negombo",
+    img:"https://images.unsplash.com/photo-1574071318508-1cdbab80d002?auto=format&fit=crop&w=900&q=80"
+    },
+
+    {
+    name:"Pizza Hut Jaffna",
+    img:"https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=900&q=80"
+    },
+
+    {
+    name:"Pizza Hut Matara",
+    img:"https://images.unsplash.com/photo-1594007654729-407eedc4be65?auto=format&fit=crop&w=900&q=80"
+    },
+
+    {
+    name:"Pizza Hut Batticaloa",
+    img:"https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?auto=format&fit=crop&w=900&q=80"
+    },
+
+    {
+    name:"Pizza Hut Kurunegala",
+    img:"https://images.unsplash.com/photo-1593504049359-74330189a345?auto=format&fit=crop&w=900&q=80"
+    },
+
+    {
+    name:"Pizza Hut Anuradhapura",
+    img:"https://images.unsplash.com/photo-1534308983496-4fabb1a015ee?auto=format&fit=crop&w=900&q=80"
+    },
+
+    {
+    name:"Pizza Hut Trincomalee",
+    img:"https://images.unsplash.com/photo-1514326640560-7d063ef2aed5?auto=format&fit=crop&w=900&q=80"
+    }
+
+    ];
+
+    /* =========================
+    FOOD MENU
+    ========================= */
+
+    const foods = [
+
+    {
+    name:"Cheese Pizza",
+    img:"https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=900&q=80",
+    price:"Rs 2800",
+    review:"⭐ 4.8 • Loaded cheese pizza"
+    },
+
+    {
+    name:"Pepperoni Pizza",
+    img:"https://images.unsplash.com/photo-1628840042765-356cda07504e?auto=format&fit=crop&w=900&q=80",
+    price:"Rs 3200",
+    review:"⭐ 4.9 • Crispy pepperoni slices"
+    },
+
+    {
+    name:"Chicken Pizza",
+    img:"https://images.unsplash.com/photo-1565299507177-b0ac66763828?auto=format&fit=crop&w=900&q=80",
+    price:"Rs 3100",
+    review:"⭐ 4.7 • Spicy chicken topping"
+    },
+
+    {
+    name:"Veggie Pizza",
+    img:"https://images.unsplash.com/photo-1571407970349-bc81e7e96d47?auto=format&fit=crop&w=900&q=80",
+    price:"Rs 2600",
+    review:"⭐ 4.6 • Fresh vegetables"
+    },
+
+    {
+    name:"BBQ Pizza",
+    img:"https://images.unsplash.com/photo-1601924582970-9238bcb495d9?auto=format&fit=crop&w=900&q=80",
+    price:"Rs 3500",
+    review:"⭐ 4.9 • BBQ flavor blast"
+    },
+
+    {
+    name:"Garlic Bread",
+    img:"https://images.unsplash.com/photo-1573140247632-f8fd74997d5c?auto=format&fit=crop&w=900&q=80",
+    price:"Rs 1200",
+    review:"⭐ 4.5 • Crispy garlic bread"
+    },
+
+    {
+    name:"Chicken Wings",
+    img:"https://images.unsplash.com/photo-1527477396000-e27163b481c2?auto=format&fit=crop&w=900&q=80",
+    price:"Rs 1800",
+    review:"⭐ 4.8 • Spicy wings"
+    },
+
+    {
+    name:"French Fries",
+    img:"https://images.unsplash.com/photo-1573080496219-bb080dd4f877?auto=format&fit=crop&w=900&q=80",
+    price:"Rs 900",
+    review:"⭐ 4.4 • Crispy fries"
+    },
+
+    {
+    name:"Pasta Alfredo",
+    img:"https://images.unsplash.com/photo-1645112411341-6c4fd023714a?auto=format&fit=crop&w=900&q=80",
+    price:"Rs 2400",
+    review:"⭐ 4.7 • Creamy white sauce pasta"
+    },
+
+    {
+    name:"Lasagna",
+    img:"https://images.unsplash.com/photo-1619895092538-128341789043?auto=format&fit=crop&w=900&q=80",
+    price:"Rs 2600",
+    review:"⭐ 4.8 • Cheese layered lasagna"
+    },
+
+    {
+    name:"Chocolate Lava Cake",
+    img:"https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=900&q=80",
+    price:"Rs 1400",
+    review:"⭐ 4.9 • Hot chocolate dessert"
+    },
+
+    {
+    name:"Coke Float",
+    img:"https://images.unsplash.com/photo-1544145945-f90425340c7e?auto=format&fit=crop&w=900&q=80",
+    price:"Rs 700",
+    review:"⭐ 4.4 • Cold refreshing drink"
+    }
+
+    ];
+
+    /* =========================
+    RENDER RESTAURANTS
+    ========================= */
+
+    const grid = document.getElementById("grid");
+
+    restaurants.forEach((r,i)=>{
+
+    grid.innerHTML += `
+
+    <div class="card">
+
+        <img
+            src="${r.img}"
+            onerror="this.src='https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=900&q=80'"
+        >
+
+        <div class="card-content">
+
+            <h3>${r.name}</h3>
+
+            <button onclick="openRes(${i})">
+                See Details
+            </button>
+
+        </div>
+
+    </div>
+
+    `;
+
+    });
+
+    /* =========================
+    OPEN RESTAURANT
+    ========================= */
+
+    function openRes(i){
+
+    document.getElementById("title").innerText =
+    restaurants[i].name;
+
+    let menu = document.getElementById("menu");
+
+    menu.innerHTML = `<div class="food-grid">`;
+
+    foods.forEach(f=>{
+
+    menu.innerHTML += `
+
+    <div class="food">
+
+        <img
+            src="${f.img}"
+            onerror="this.src='https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=900&q=80'"
+        >
+
+        <div class="food-info">
+
+            <h4>${f.name}</h4>
+
+            <div class="price">${f.price}</div>
+
+            <div class="review">${f.review}</div>
+
+        </div>
+
+    </div>
+
+    `;
+
+    });
+
+    menu.innerHTML += `</div>`;
+
+    document.getElementById("view").style.display = "block";
+
+    }
+
+    /* =========================
+    CLOSE VIEW
+    ========================= */
+
+    function closeView(){
+
+    document.getElementById("view").style.display = "none";
+
+    }
+
+</script>
+
+</body>
+</html>

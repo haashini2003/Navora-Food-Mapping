@@ -1,5 +1,363 @@
-const kfc = Array.from({ length: 50 }, (_, i) => ({
-name: `KFC Branch ${i + 1}`,
-rating: (4 + Math.random()).toFixed(1),
-image: "https://images.unsplash.com/photo-1626645738196-c2a7c87a8f58"
-}));
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>KFC Navora </title>
+
+    <style>
+
+        body{
+            margin:0;
+            font-family:Arial;
+            background:#f5f5f5;
+        }
+
+        /* HEADER */
+        .title{
+            text-align:center;
+            background:#e4002b;
+            color:white;
+            padding:20px;
+            margin:0;
+        }
+
+        /* GRID */
+        .grid{
+            display:grid;
+            grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+            gap:20px;
+            padding:20px;
+        }
+
+        .card{
+            background:white;
+            border-radius:18px;
+            overflow:hidden;
+            box-shadow:0 4px 12px rgba(0,0,0,0.1);
+            cursor:pointer;
+            transition:0.3s;
+        }
+
+        .card:hover{
+            transform:translateY(-5px);
+        }
+
+        .card img{
+            width:100%;
+            height:200px;
+            object-fit:cover;
+        }
+
+        .card-content{
+            padding:15px;
+        }
+
+        .card button{
+            background:#e4002b;
+            color:white;
+            border:none;
+            padding:10px 15px;
+            border-radius:10px;
+            cursor:pointer;
+            margin-top:10px;
+        }
+
+        /* VIEW */
+        .view{
+            display:none;
+            position:fixed;
+            inset:0;
+            background:#fff;
+            overflow:auto;
+            z-index:999;
+        }
+
+        .header{
+            background:#111;
+            color:white;
+            padding:15px;
+            display:flex;
+            justify-content:space-between;
+        }
+
+        .close{cursor:pointer;font-size:22px}
+
+        /* FOOD GRID */
+        .food-grid{
+            display:grid;
+            grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+            gap:18px;
+            padding:20px;
+        }
+
+        .food{
+            background:white;
+            border-radius:15px;
+            overflow:hidden;
+            box-shadow:0 3px 10px rgba(0,0,0,0.08);
+        }
+
+        .food img{
+            width:100%;
+            height:160px;
+            object-fit:cover;
+        }
+
+        .food-info{
+            padding:12px;
+        }
+
+        .price{
+            color:green;
+            font-weight:bold;
+        }
+
+        .review{
+            font-size:13px;
+            color:#555;
+        }
+        .navbar{
+    position:sticky;
+    top:0;
+    z-index:1000;
+    background:#111;
+    color:white;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:12px 15px;
+}
+
+.logo{
+    font-size:18px;
+    font-weight:bold;
+}
+
+.theme-btn{
+    cursor:pointer;
+    font-size:20px;
+    user-select:none;
+}
+
+/* DARK THEME */
+body.dark-theme{
+    background:#121212;
+    color:white;
+}
+
+body.dark-theme .card{
+    background:#1e1e1e;
+    color:white;
+}
+
+        .navbar{
+    position:sticky;
+    top:0;
+    z-index:1000;
+    background:#111;
+    color:white;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:12px 15px;
+}
+
+.logo{
+    font-size:18px;
+    font-weight:bold;
+}
+
+.nav-right{
+    display:flex;
+    gap:15px;
+    align-items:center;
+}
+
+.theme-btn{
+    cursor:pointer;
+    font-size:20px;
+}
+
+.cart{
+    cursor:pointer;
+    background:#ff5722;
+    padding:6px 10px;
+    border-radius:20px;
+    font-size:14px;
+    display:flex;
+    align-items:center;
+    gap:5px;
+}
+
+/* CART NUMBER */
+#cartCount{
+    background:white;
+    color:black;
+    border-radius:50%;
+    padding:2px 6px;
+    font-size:12px;
+    font-weight:bold;
+}
+
+/* DARK MODE */
+body.dark-theme{
+    background:#121212;
+    color:white;
+}
+
+body.dark-theme .card{
+    background:#1e1e1e;
+    color:white;
+}
+
+body.dark-theme .navbar{
+    background:#000;
+}
+
+    </style>
+</head>
+
+<body>
+
+<div class="navbar">
+    <div class="logo">🍽️ Navora</div>
+
+    <div class="nav-right">
+        <span class="theme-btn" onclick="toggleTheme()" id="themeBtn">🌙</span>
+    </div>
+</div>
+<!-- CART -->
+<div class="cart" onclick="openCart()">
+    🛒 <span id="cartCount">0</span>
+</div>
+
+<!-- THEME -->
+<span class="theme-btn" onclick="toggleTheme()" id="themeBtn">🌙</span>
+
+</div>
+</div>
+
+<h1 class="title">🍗 KFC Navora </h1>
+
+<div class="grid" id="grid"></div>
+
+<!-- VIEW -->
+<div class="view" id="view">
+
+    <div class="header">
+        <span id="title">KFC</span>
+        <span class="close" onclick="closeView()">✖</span>
+    </div>
+
+    <div id="menu"></div>
+
+</div>
+
+<script>
+
+    /* ======================
+    10 KFC BRANCHES
+    ====================== */
+
+    const restaurants = [
+    {name:"KFC Colombo",img:"https://images.unsplash.com/photo-1513639776629-7b61b0ac49cb?auto=format&fit=crop&w=900&q=80"},
+    {name:"KFC Kandy",img:"https://images.unsplash.com/photo-1604908177522-0406c7c1d7f1?auto=format&fit=crop&w=900&q=80"},
+    {name:"KFC Galle",img:"https://images.unsplash.com/photo-1626645738196-c2a7c87a9a0f?auto=format&fit=crop&w=900&q=80"},
+    {name:"KFC Jaffna",img:"https://images.unsplash.com/photo-1562967916-eb82221dfb92?auto=format&fit=crop&w=900&q=80"},
+    {name:"KFC Negombo",img:"https://images.unsplash.com/photo-1606756790138-261d2b21cd75?auto=format&fit=crop&w=900&q=80"},
+    {name:"KFC Matara",img:"https://images.unsplash.com/photo-1619881590738-9c0a0c8a5f3a?auto=format&fit=crop&w=900&q=80"},
+    {name:"KFC Kurunegala",img:"https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?auto=format&fit=crop&w=900&q=80"},
+    {name:"KFC Batticaloa",img:"https://images.unsplash.com/photo-1604908554031-5f0a6b8d1c0d?auto=format&fit=crop&w=900&q=80"},
+    {name:"KFC Anuradhapura",img:"https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=900&q=80"},
+    {name:"KFC Trincomalee",img:"https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=900&q=80"}
+    ];
+
+    /* ======================
+    KFC MENU (REAL ITEMS)
+    ====================== */
+
+    const foods = [
+
+    {name:"Zinger Burger",img:"https://images.unsplash.com/photo-1550547660-d9450f859349",price:"Rs 950",review:"⭐ 4.9 Crispy spicy chicken burger"},
+
+    {name:"Hot Wings",img:"https://images.unsplash.com/photo-1606756790138-261d2b21cd75",price:"Rs 750",review:"⭐ 4.8 Spicy fried wings"},
+
+    {name:"Chicken Bucket",img:"https://images.unsplash.com/photo-1604908177522-0406c7c1d7f1",price:"Rs 2500",review:"⭐ 5.0 Family bucket meal"},
+
+    {name:"Popcorn Chicken",img:"https://images.unsplash.com/photo-1626645738196-c2a7c87a9a0f",price:"Rs 800",review:"⭐ 4.7 Crispy bites"},
+
+    {name:"French Fries",img:"https://images.unsplash.com/photo-1573080496219-bb080dd4f877",price:"Rs 400",review:"⭐ 4.5 Golden fries"},
+
+    {name:"Rice Bowl",img:"https://images.unsplash.com/photo-1604908554031-5f0a6b8d1c0d",price:"Rs 900",review:"⭐ 4.6 Chicken rice bowl"},
+
+    {name:"Chicken Wrap",img:"https://images.unsplash.com/photo-1626645738196-c2a7c87a9a0f",price:"Rs 850",review:"⭐ 4.7 Soft wrap meal"},
+
+    {name:"Coleslaw",img:"https://images.unsplash.com/photo-1546549032-9571cd6b27df",price:"Rs 300",review:"⭐ 4.4 Fresh salad mix"},
+
+    {name:"Pepsi",img:"https://images.unsplash.com/photo-1581006852262-e4307cf6283a",price:"Rs 250",review:"⭐ 4.3 Cold drink"},
+
+    {name:"Chocolate Sundae",img:"https://images.unsplash.com/photo-1505253213348-cd54c92b37b8",price:"Rs 500",review:"⭐ 4.8 Sweet dessert"}
+    ];
+
+    /* ======================
+    RENDER
+    ====================== */
+
+    const grid = document.getElementById("grid");
+
+    restaurants.forEach((r,i)=>{
+
+    grid.innerHTML += `
+    <div class="card">
+        <img src="${r.img}" onerror="this.src='https://images.unsplash.com/photo-1513639776629-7b61b0ac49cb'">
+        <div class="card-content">
+            <h3>${r.name}</h3>
+            <button onclick="openRes(${i})">See Details</button>
+        </div>
+    </div>
+    `;
+
+    });
+
+    /* ======================
+    OPEN RESTAURANT
+    ====================== */
+
+    function openRes(i){
+
+    document.getElementById("title").innerText = restaurants[i].name;
+
+    let menu = document.getElementById("menu");
+    menu.innerHTML = `<div class="food-grid">`;
+
+    foods.forEach(f=>{
+
+    menu.innerHTML += `
+    <div class="food">
+        <img src="${f.img}" onerror="this.src='https://images.unsplash.com/photo-1550547660-d9450f859349'">
+
+        <div class="food-info">
+            <h4>${f.name}</h4>
+            <div class="price">${f.price}</div>
+            <div class="review">${f.review}</div>
+        </div>
+    </div>
+    `;
+
+    });
+
+    menu.innerHTML += `</div>`;
+    document.getElementById("view").style.display = "block";
+
+    }
+
+    /* CLOSE */
+
+    function closeView(){
+    document.getElementById("view").style.display = "none";
+    }
+
+</script>
+
+</body>
+</html>

@@ -201,11 +201,126 @@
             border-radius:8px;
             cursor:pointer;
         }
+        .navbar{
+    position:sticky;
+    top:0;
+    z-index:1000;
+    background:#111;
+    color:white;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:12px 15px;
+}
+
+.logo{
+    font-size:18px;
+    font-weight:bold;
+}
+
+.theme-btn{
+    cursor:pointer;
+    font-size:20px;
+    user-select:none;
+}
+
+/* DARK THEME */
+body.dark-theme{
+    background:#121212;
+    color:white;
+}
+
+body.dark-theme .card{
+    background:#1e1e1e;
+    color:white;
+}
+        .navbar{
+    position:sticky;
+    top:0;
+    z-index:1000;
+    background:#111;
+    color:white;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:12px 15px;
+}
+
+.logo{
+    font-size:18px;
+    font-weight:bold;
+}
+
+.nav-right{
+    display:flex;
+    gap:15px;
+    align-items:center;
+}
+
+.theme-btn{
+    cursor:pointer;
+    font-size:20px;
+}
+
+.cart{
+    cursor:pointer;
+    background:#ff5722;
+    padding:6px 10px;
+    border-radius:20px;
+    font-size:14px;
+    display:flex;
+    align-items:center;
+    gap:5px;
+}
+
+/* CART NUMBER */
+#cartCount{
+    background:white;
+    color:black;
+    border-radius:50%;
+    padding:2px 6px;
+    font-size:12px;
+    font-weight:bold;
+}
+
+/* DARK MODE */
+body.dark-theme{
+    background:#121212;
+    color:white;
+}
+
+body.dark-theme .card{
+    background:#1e1e1e;
+    color:white;
+}
+
+body.dark-theme .navbar{
+    background:#000;
+}
 
     </style>
 </head>
 
 <body>
+
+<div class="navbar">
+    <div class="logo">🍽️ Navora</div>
+
+    <div class="nav-right">
+        <span class="theme-btn" onclick="toggleTheme()" id="themeBtn">🌙</span>
+    </div>
+</div>
+
+<!-- CART -->
+<div class="cart" onclick="openCart()">
+    🛒 <span id="cartCount">0</span>
+</div>
+
+<!-- THEME -->
+<span class="theme-btn" onclick="toggleTheme()" id="themeBtn">🌙</span>
+
+</div>
+</div>
 
 <h1>🏨 Hotels - Navora</h1>
 
